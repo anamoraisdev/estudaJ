@@ -1,0 +1,82 @@
+[
+    {
+      "id": 5,
+      "name": "Artes",
+      "description": "História da arte, movimentos artísticos e apreciação estética."
+    },
+    {
+      "id": 12,
+      "name": "Biologia",
+      "description": "Ecologia, genética, fisiologia humana e biotecnologia."
+    },
+      {
+      "id": 6,
+      "name": "Educação Física",
+      "description": "Conceitos de saúde, esportes e atividades físicas."
+    },
+    {
+      "id": 10,
+      "name": "Filosofia",
+      "description": "Correntes filosóficas, pensadores, ética e moral."
+    },
+    {
+      "id": 14,
+      "name": "Física",
+      "description": "Mecânica, termodinâmica, eletromagnetismo e física moderna."
+    },
+    {
+      "id": 9,
+      "name": "Geografia",
+      "description": "Geografia física e humana, questões ambientais e geopolítica."
+    },
+    {
+      "id": 8,
+      "name": "História",
+      "description": "História do Brasil e mundial, eventos históricos e interpretação de documentos."
+    },
+    {
+      "id": 3,
+      "name": "Língua Estrangeira - Espanhol",
+      "description": "Interpretação de textos, gramática básica e vocabulário em espanhol."
+    },
+      {
+      "id": 4,
+      "name": "Língua Estrangeira - Inglês",
+      "description": "Interpretação de textos, gramática básica e vocabulário em inglês."
+    },
+    {
+      "id": 1,
+      "name": "Língua Portuguesa",
+      "description": "Estudo da gramática, interpretação de textos e literatura brasileira."
+    },
+    {
+      "id": 2,
+      "name": "Literatura",
+      "description": "Análise de obras literárias, autores e estilos literários."
+    },
+    {
+      "id": 15,
+      "name": "Matemática",
+      "description": "Aritmética, álgebra, geometria, trigonometria, estatística e probabilidade."
+    },
+    {
+      "id": 13,
+      "name": "Química",
+      "description": "Química geral, físico-química e química orgânica."
+    },
+     {
+      "id": 16,
+      "name": "Redação",
+      "description": "Produção de um texto dissertativo-argumentativo sobre um tema da atualidade."
+    },
+    {
+      "id": 11,
+      "name": "Sociologia",
+      "description": "Estrutura social, movimentos sociais, cultura e identidade."
+    },
+    {
+      "id": 7,
+      "name": "Tecnologias da Informação e Comunicação (TIC)",
+      "description": "Uso de ferramentas digitais e impacto da tecnologia na sociedade."
+    }
+  ]
