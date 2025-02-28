@@ -1,29 +1,21 @@
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import contentsJson from "../../constants/contents.json"
-
-interface Content {
-  name: string,
-  id: number,
-  description: string 
-}
+import { Link} from "expo-router";
 
 export default function ContentsPage() {
-  const contents = contentsJson 
-
+  const contents = contentsJson
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Matérias</Text>
       <ScrollView showsVerticalScrollIndicator={false}>
-      {contents.map((content) => 
-        <View key={content.id} style={styles.containerContent} >
-          <Text style={styles.titleContent}>
-            {content.name}
-          </Text>
-          <Text>
-            {content.description}
-          </Text>
-        </View>
-      )}
+        {contents.map((content) =>
+          <Link key={content.id} href={{ pathname: '/[id]', params: { id: content.id } }}  asChild>
+            <TouchableOpacity style={styles.containerContent}>
+              <Text style={styles.titleContent}>{content.name}</Text>
+              <Text>{content.description}</Text>
+            </TouchableOpacity>
+          </Link>
+        )}
 
       </ScrollView>
     </View>
@@ -47,7 +39,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#555",
   },
-  titleContent:{
+  titleContent: {
     fontSize: 20,
     fontWeight: "bold",
   },
