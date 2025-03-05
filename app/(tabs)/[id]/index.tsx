@@ -1,4 +1,4 @@
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams} from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import contentsJson from "../../../constants/contents.json"
 import { useEffect, useState } from "react";
@@ -8,7 +8,7 @@ interface Topico{
   name:  string,
 }
 const ContentPage = () => {
-  const { id } = useLocalSearchParams();
+   const { id } = useLocalSearchParams();
   const [topics, setTopics] = useState<Topico[]>([])
   const [loading, setLoading] = useState(false)
   const content = contentsJson.find((item) => item.id === Number(id));
@@ -16,10 +16,10 @@ const ContentPage = () => {
 
   const getResponse = async () => {
     setLoading(true)
-    const genAI = new GoogleGenerativeAI("API_KEY");
+    const genAI = new GoogleGenerativeAI("APIKEY");
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const prompt = `Gere uma lista de topicos que caem no enem sobre a materia ${content?.name} em formato JSON com id e name`;
+    const prompt = `Gere uma lista de topicos para o enem 2025 sobre a materia ${content?.name} em formato JSON com id e name. Não me envie nenhum outro dado além do JSON.`;
 
     try {
       const result = await model.generateContent(prompt);
@@ -32,6 +32,7 @@ const ContentPage = () => {
       if (inicioJson !== -1) {
     
         const jsonString = topicsJsonString.substring(inicioJson);
+        console.log("json *", jsonString)
 
         const topicsArray = JSON.parse(jsonString);
         setTopics(topicsArray);
@@ -55,9 +56,9 @@ const ContentPage = () => {
       <Text>{content?.description}</Text>
       <ScrollView showsVerticalScrollIndicator={false}>
         {!loading ? topics?.map((item) => 
-        <View style={styles.containerTopic} key={item.id}>
+        <Link href={{ pathname: "/chat", params: { topico: item.name } }} style={styles.containerTopic} key={item.id}>
           <Text>{item.name}</Text>
-        </View>
+        </Link>
         ) : <Text> carregando...</Text>}
       </ScrollView>
     </View>
