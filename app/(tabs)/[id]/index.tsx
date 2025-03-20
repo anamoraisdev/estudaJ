@@ -1,18 +1,19 @@
-import { Link, useLocalSearchParams} from "expo-router";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Link, useLocalSearchParams } from "expo-router";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import contentsJson from "../../../constants/contents.json"
 import { useEffect, useState } from "react";
 
-interface Topico{
+interface Topico {
   id: number,
-  name:  string,
+  name: string,
 }
 const ContentPage = () => {
-   const { id } = useLocalSearchParams();
-  const [topics, setTopics] = useState<Topico[]>([])
-  const [loading, setLoading] = useState(false)
+  const { id } = useLocalSearchParams();
   const content = contentsJson.find((item) => item.id === Number(id));
   const { GoogleGenerativeAI } = require("@google/generative-ai");
+  const [topics, setTopics] = useState<Topico[]>([])
+  const [loading, setLoading] = useState(false)
+  const [selected, setSelected] = useState<"conteudo" | "atividades">("conteudo")
 
   const getResponse = async () => {
     setLoading(true)
@@ -27,10 +28,10 @@ const ContentPage = () => {
 
       topicsJsonString = topicsJsonString.replace(/`(json)?\n/g, "").replace(/`/g, "");
 
-    
-      const inicioJson = topicsJsonString.indexOf("["); 
+
+      const inicioJson = topicsJsonString.indexOf("[");
       if (inicioJson !== -1) {
-    
+
         const jsonString = topicsJsonString.substring(inicioJson);
         console.log("json *", jsonString)
 
@@ -47,20 +48,35 @@ const ContentPage = () => {
   };
 
   useEffect(() => {
-  getResponse()
-  },[])
+    getResponse()
+  }, [])
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{content?.name}</Text>
       <Text>{content?.description}</Text>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {!loading ? topics?.map((item) => 
-        <Link href={{ pathname: "/chat", params: { topico: item.name } }} style={styles.containerTopic} key={item.id}>
-          <Text>{item.name}</Text>
-        </Link>
-        ) : <Text> carregando...</Text>}
-      </ScrollView>
+      <View style={styles.containerButtons}>
+        <TouchableOpacity
+          style={[styles.button, selected === "conteudo" && styles.selected]}
+          onPress={() => setSelected("conteudo")}
+        >
+          <Text style={[styles.text, selected === "conteudo" && styles.textSelected]}>Conteúdo</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.button, selected === "atividades" && styles.selected]}
+          onPress={() => setSelected("atividades")}
+        >
+          <Text style={[styles.text, selected === "atividades" && styles.textSelected]}>Atividades</Text>
+        </TouchableOpacity>
+      </View>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {!loading ? topics?.map((item) =>
+            <Link href={{ pathname:`${selected == "conteudo" ? "/chat" : "/activities"}`, params: { topico: item.name } }} style={styles.containerTopic} key={item.id}>
+              <Text>{item.name}</Text>
+            </Link>
+          ) : <Text> carregando...</Text>}
+        </ScrollView>
     </View>
   );
 }
@@ -71,7 +87,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 12,
-    gap: 20,
+    gap: 10,
     marginBottom: 20,
   },
   title: {
@@ -84,6 +100,26 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     margin: 6,
     maxWidth: 350
-  }
+  },
+  containerButtons: {
+    flexDirection: 'row',
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginHorizontal: 5,
+    backgroundColor: "#ddd",
+  },
+  selected: {
+    backgroundColor: "#007bff",
+  },
+  text: {
+    fontSize: 16,
+    color: "#333",
+  },
+  textSelected: {
+    color: "#fff",
+  },
 });
 export default ContentPage
