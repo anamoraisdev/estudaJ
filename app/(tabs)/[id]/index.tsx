@@ -2,6 +2,7 @@ import { Link, useLocalSearchParams } from "expo-router";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import contentsJson from "../../../constants/contents.json"
 import { useEffect, useState } from "react";
+import Constants from 'expo-constants';
 
 interface Topico {
   id: number,
@@ -14,10 +15,11 @@ const ContentPage = () => {
   const [topics, setTopics] = useState<Topico[]>([])
   const [loading, setLoading] = useState(false)
   const [selected, setSelected] = useState<"conteudo" | "atividades">("conteudo")
+  const apiKey = Constants.expoConfig?.extra?.apiKey;
 
   const getResponse = async () => {
     setLoading(true)
-    const genAI = new GoogleGenerativeAI("APIKEY");
+    const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `Gere uma lista de topicos para o enem 2025 sobre a materia ${content?.name} em formato JSON com id e name. Não me envie nenhum outro dado além do JSON.`;

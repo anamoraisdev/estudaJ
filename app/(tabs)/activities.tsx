@@ -1,6 +1,7 @@
 import { useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import { Text, View } from "react-native"
+import Constants from "expo-constants";
 
 interface Option {
     id: number,
@@ -17,10 +18,11 @@ interface Guestion {
 const GuestionsPage = () => {
     const { topico } = useLocalSearchParams();
     const { GoogleGenerativeAI } = require("@google/generative-ai");
+    const apiKey = Constants.expoConfig?.extra?.apiKey;
 
 
    const getGuestions = async() => {
-    const genAI = new GoogleGenerativeAI("");
+    const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `Gere uma lista de atividades multiplescolha em formato JSON sobre o tema ${topico}, com base em provas antigas do ENEM. Cada questao deve ter id, statement, options e template(gabarito). As alternativas devem ter id, letter e text`;

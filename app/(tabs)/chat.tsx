@@ -1,6 +1,9 @@
 import { View, Text, StyleSheet, ScrollView, TextInput, Button } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
+import Constants from "expo-constants";
+import Markdown from 'react-native-markdown-display';
+
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 interface ChatMessage {
     text: string;
@@ -11,18 +14,23 @@ const Chat = () => {
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     const [userInput, setUserInput] = useState("");
     const [firstMessageSent, setFirstMessageSent] = useState(false);
+    const apiKey = Constants.expoConfig?.extra?.apiKey;
+
     const sendMessage = async () => {
         const genAI = new GoogleGenerativeAI(
-            "APIKEY"
+            apiKey
         );
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-        const prompt = userInput || `Me responda em portugues. Sou estudante do ENEM 2025,me ensine detalhadamente e de forma didatica sobre " ${topico} " levando em consideracao as ultimas provas do ENEM. `;
+        const prompt = userInput || `Por favor, forneça um conteúdo didático detalhado sobre ${topico} para o nível de ensino médio. O conteúdo deve incluir uma explicação clara e objetiva sobre o tema, abordando conceitos principais. Não quero nesse texto atividades, nem dicas de estudo, pois, terei um espaço especifico no app para isso.`;
 
 
         try {
             const result = await model.generateContent(prompt);
             const response = result.response.text();
+           
+
+            console.log(response)
 
             if (!firstMessageSent) {
                 setChatMessages([{ text: response, sender: 'gemini' }]);
@@ -39,6 +47,7 @@ const Chat = () => {
             }
         }
     };
+
     useEffect(() => {
         sendMessage();
     }, [])
@@ -49,7 +58,7 @@ const Chat = () => {
             <ScrollView style={styles.chatContainer} showsVerticalScrollIndicator={false}>
                 {chatMessages.map((message, index) => (
                     <View key={index} style={message.sender === 'user' ? styles.userMessage : styles.geminiMessage}>
-                        <Text>{message.text}</Text>
+                        <Markdown>{message.text}</Markdown>
                     </View>
                 ))}
             </ScrollView>
@@ -84,18 +93,20 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
     },
     userMessage: {
-        backgroundColor: '#DCF8C6',
+        backgroundColor: '#839deb',
         padding: 10,
-        borderRadius: 10,
+        borderRadius: 25,
         alignSelf: 'flex-end',
         marginVertical: 5,
+        borderTopRightRadius: 0,
     },
     geminiMessage: {
         backgroundColor: '#E8E8E8',
         padding: 10,
-        borderRadius: 10,
+        borderRadius: 25,
         alignSelf: 'flex-start',
         marginVertical: 5,
+        borderTopLeftRadius: 0,
     },
     inputContainer: {
         flexDirection: 'row',
