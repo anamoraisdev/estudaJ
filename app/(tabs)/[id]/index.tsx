@@ -1,12 +1,11 @@
-
 import { Link, useLocalSearchParams } from "expo-router";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import contentsJson from "../../../constants/contents.json";
 import { useEffect, useState } from "react";
 import Constants from "expo-constants";
 import OpenAI from "openai";
 
-interface Topico {
+interface Topic{
   id: number;
   name: string;
 }
@@ -15,12 +14,10 @@ const ContentPage = () => {
   const { id } = useLocalSearchParams();
   const content = contentsJson.find((item) => item.id === Number(id));
 
-  const [topics, setTopics] = useState<Topico[]>([]);
+  const [topics, setTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selected, setSelected] = useState<"conteudo" | "atividades">("conteudo");
 
   const apiKey = Constants.expoConfig?.extra?.openaiApiKey;
-
   const client = new OpenAI({ apiKey });
 
   const getResponse = async () => {
@@ -34,15 +31,12 @@ const ContentPage = () => {
           {
             role: "system",
             content: `Você é um especialista em montar listas de tópicos do ENEM.
-
-Gere apenas JSON válido, sem explicações, sem texto extra, sem crases.
-
-O formato obrigatório é:
-{
-  "topics": [
-    { "id": number, "name": string }
-  ]
-}`,
+            Gere apenas JSON válido no formato:
+            {
+              "topics": [
+                { "id": number, "name": string }
+              ]
+            }`,
           },
           {
             role: "user",
@@ -71,31 +65,34 @@ O formato obrigatório é:
     <View style={styles.container}>
       <Text style={styles.title}>{content?.name}</Text>
       <Text>{content?.description}</Text>
-      <View style={styles.containerButtons}>
-        <TouchableOpacity
-          style={[styles.button, selected === "conteudo" && styles.selected]}
-          onPress={() => setSelected("conteudo")}
-        >
-          <Text style={[styles.text, selected === "conteudo" && styles.textSelected]}>Conteúdo</Text>
-        </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.button, selected === "atividades" && styles.selected]}
-          onPress={() => setSelected("atividades")}
-        >
-          <Text style={[styles.text, selected === "atividades" && styles.textSelected]}>Atividades</Text>
-        </TouchableOpacity>
-      </View>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {!loading ? topics?.map((item) =>
-            <Link href={{ pathname:`${selected == "conteudo" ? "/chat" : "/activities"}`, params: { topico: item.name } }} style={styles.containerTopic} key={item.id}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {!loading ? (
+          topics.map((item) => (
+            <Link
+              href={{
+                pathname: "/[id]/[topic]",
+                params: {
+                topic: item.name
+                 .normalize("NFD")
+                 .replace(/[\u0300-\u036f]/g, "")
+                 .replace(/\s+/g, "-")
+                 .toLowerCase(),
+                },
+              }}
+              style={styles.containerTopic}
+              key={item.id}
+            >
               <Text>{item.name}</Text>
             </Link>
-          ) : <Text> carregando...</Text>}
-        </ScrollView>
+          ))
+        ) : (
+          <Text>carregando...</Text>
+        )}
+      </ScrollView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
