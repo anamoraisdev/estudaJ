@@ -57,7 +57,6 @@ const TopicPage = () => {
 
     return (
         <ScrollView style={styles.container}>
-            <Text style={styles.title}>{topic}</Text>
 
             {loading ? (
                 <Text>Carregando conteúdo...</Text>
@@ -65,9 +64,7 @@ const TopicPage = () => {
                 <Markdown style={markdownStyles}>
                     {content}
                 </Markdown>
-
             )}
-
         </ScrollView>
     );
 };
@@ -79,61 +76,36 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+        paddingBottom: 100
     },
-    title: {
-        fontSize: 26,
-        fontWeight: "bold",
-        marginBottom: 12,
-    },
-    contentText: {
-        fontSize: 16,
-        lineHeight: 24,
-        color: "#333",
-    },
-    menu: {
-        marginTop: 30,
-        gap: 12,
-    },
-    button: {
-        backgroundColor: "#007bff",
-        padding: 14,
-        borderRadius: 12,
-        alignItems: "center",
-    },
-    buttonText: {
-        color: "#fff",
-        fontWeight: "bold",
-    },
-
-    
 });
 
-const markdownStyles = StyleSheet.create( {
-  body: {
-    color: "#333",
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  heading1: {
-    fontSize: 26,
-    fontWeight: "bold",
-    marginVertical: 10,
-  },
-  heading2: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginVertical: 8,
-  },
-  heading3: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginVertical: 6,
-  },
-  bullet_list: {
-    marginVertical: 6,
-  },
-  list_item: {
-    marginVertical: 4,
-  },
+const markdownStyles = StyleSheet.create({
+    body: {
+        color: "#333",
+        fontSize: 16,
+        lineHeight: 24,
+    },
+    heading1: {
+        fontSize: 26,
+        fontWeight: "bold",
+        marginVertical: 10,
+    },
+    heading2: {
+        fontSize: 22,
+        fontWeight: "bold",
+        marginVertical: 8,
+    },
+    heading3: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginVertical: 6,
+    },
+    bullet_list: {
+        marginVertical: 6,
+    },
+    list_item: {
+        marginVertical: 4,
+    },
 });
 

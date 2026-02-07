@@ -17,7 +17,7 @@ interface Question {
   template: string;
 }
 
-const QuestionsPage = () => {
+const Tasks = () => {
   const { topico } = useLocalSearchParams();
   const apiKey = Constants.expoConfig?.extra?.openaiApiKey;
 
@@ -25,7 +25,7 @@ const QuestionsPage = () => {
 
   const [questions, setQuestions] = useState<Question[]>([]);
 
-  const getQuestions = async () => {
+  const getTasks = async () => {
     try {
       const completion = await client.chat.completions.create({
         model: "gpt-4o-mini",
@@ -75,7 +75,7 @@ Formato obrigatório:
   };
 
   useEffect(() => {
-    getQuestions();
+    getTasks();
   }, []);
 
     return (
@@ -101,7 +101,7 @@ Formato obrigatório:
     )
 }
 
-export default QuestionsPage;
+export default Tasks;
 
 const styles = StyleSheet.create({
     container: {
