@@ -3,54 +3,99 @@ import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import Constants from "expo-constants";
 import Markdown from 'react-native-markdown-display';
+import OpenAI from "openai";
 
-const { GoogleGenerativeAI } = require("@google/generative-ai");
 interface ChatMessage {
     text: string;
-    sender: 'user' | 'gemini';
+    sender: 'user' | 'gpt';
   }
+
+
 const Chat = () => {
-    const { topico } = useLocalSearchParams();
-    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-    const [userInput, setUserInput] = useState("");
-    const [firstMessageSent, setFirstMessageSent] = useState(false);
-    const apiKey = Constants.expoConfig?.extra?.apiKey;
+  const { topico } = useLocalSearchParams();
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [userInput, setUserInput] = useState("");
+  const [firstMessageSent, setFirstMessageSent] = useState(false);
 
-    const sendMessage = async () => {
-        const genAI = new GoogleGenerativeAI(
-            apiKey
-        );
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const apiKey = Constants.expoConfig?.extra?.openaiApiKey;
 
-        const prompt = userInput || `Por favor, forneça um conteúdo didático detalhado sobre ${topico} para o nível de ensino médio. O conteúdo deve incluir uma explicação clara e objetiva sobre o tema, abordando conceitos principais. Não quero nesse texto atividades, nem dicas de estudo, pois, terei um espaço especifico no app para isso.`;
+  const client = new OpenAI({
+    apiKey: apiKey,
+  });
 
+  const sendMessage = async () => {
+    const prompt =
+      userInput ||
+      `Explique detalhadamente o tema "${topico}" para um aluno do ensino médio, seguindo exatamente as instruções fornecidas.`;
 
-        try {
-            const result = await model.generateContent(prompt);
-            const response = result.response.text();
-           
+    try {
+      const completion = await client.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content:
+              `Você é um professor especialista em explicar conteúdos para alunos do ensino médio brasileiro.
+                Sua função é produzir textos didáticos, claros, organizados e fáceis de entender.
+                Sempre siga estas regras ao responder:
 
-            console.log(response)
+                - Explique como se estivesse ensinando um aluno que nunca viu o assunto antes
+                - Use linguagem simples, objetiva e sem termos técnicos desnecessários
+                - Organize a resposta com títulos e subtítulos
+                - Comece com uma definição clara do tema
+                - Depois explique os conceitos principais em ordem lógica
+                - Use exemplos práticos do cotidiano quando possível
+                - Evite qualquer tipo de atividade, exercício, dica de estudo ou pergunta ao aluno
+                - Produza apenas conteúdo explicativo
+                - O texto deve estar pronto para ser exibido diretamente em um aplicativo educacional
+                - Escreva em português do Brasil
+                        
+                Estruture obrigatoriamente a resposta assim:
+                Título do tema
+                        
+                O que é
+                (definição clara)
+                        
+                Conceitos principais
+                (explicação organizada)
+                        
+                Exemplos práticos
+                (exemplos do dia a dia)
+                        
+                ## Resumo final
+                (recapitulação simples)
+                `,
+          },
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+      });
 
-            if (!firstMessageSent) {
-                setChatMessages([{ text: response, sender: 'gemini' }]);
-                setFirstMessageSent(true);
-            } else {
-                setChatMessages((prevMessages) => [...prevMessages, { text: userInput, sender: 'user' }, { text: response, sender: 'gemini' }]);
-            }
-            setUserInput("");
-        } catch (error) {
-            console.error("Erro ao obter resposta do Gemini:", error);
-            if (error instanceof Error) {
-                console.error("Mensagem de erro detalhada:", error.message);
-                console.error("Pilha de erros:", error.stack);
-            }
-        }
-    };
+      const response = completion.choices[0].message.content || "";
 
-    useEffect(() => {
-        sendMessage();
-    }, [])
+      if (!firstMessageSent) {
+        setChatMessages([{ text: response, sender: "gpt" }]);
+        setFirstMessageSent(true);
+      } else {
+        setChatMessages((prev) => [
+          ...prev,
+          { text: userInput, sender: "user" },
+          { text: response, sender: "gpt" },
+        ]);
+      }
+
+      setUserInput("");
+    } catch (error) {
+      console.error("Erro ao obter resposta do GPT:", error);
+    }
+  };
+
+  useEffect(() => {
+    sendMessage();
+  }, []);
+
 
     return (
         <View style={styles.container}>

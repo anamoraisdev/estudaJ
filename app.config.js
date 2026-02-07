@@ -40,7 +40,7 @@ export default {
       typedRoutes: true,
     },
     extra: {
-      apiKey: process.env.API_KEY,
+      openaiApiKey: process.env.OPENAI_API_KEY,
     },
   },
 };

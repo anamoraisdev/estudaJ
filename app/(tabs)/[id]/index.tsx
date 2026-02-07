@@ -1,57 +1,71 @@
+
 import { Link, useLocalSearchParams } from "expo-router";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import contentsJson from "../../../constants/contents.json"
+import contentsJson from "../../../constants/contents.json";
 import { useEffect, useState } from "react";
-import Constants from 'expo-constants';
+import Constants from "expo-constants";
+import OpenAI from "openai";
 
 interface Topico {
-  id: number,
-  name: string,
+  id: number;
+  name: string;
 }
+
 const ContentPage = () => {
   const { id } = useLocalSearchParams();
   const content = contentsJson.find((item) => item.id === Number(id));
-  const { GoogleGenerativeAI } = require("@google/generative-ai");
-  const [topics, setTopics] = useState<Topico[]>([])
-  const [loading, setLoading] = useState(false)
-  const [selected, setSelected] = useState<"conteudo" | "atividades">("conteudo")
-  const apiKey = Constants.expoConfig?.extra?.apiKey;
+
+  const [topics, setTopics] = useState<Topico[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [selected, setSelected] = useState<"conteudo" | "atividades">("conteudo");
+
+  const apiKey = Constants.expoConfig?.extra?.openaiApiKey;
+
+  const client = new OpenAI({ apiKey });
 
   const getResponse = async () => {
-    setLoading(true)
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-    const prompt = `Gere uma lista de topicos para o enem 2025 sobre a materia ${content?.name} em formato JSON com id e name. Não me envie nenhum outro dado além do JSON.`;
+    setLoading(true);
 
     try {
-      const result = await model.generateContent(prompt);
-      let topicsJsonString = result.response.text();
+      const completion = await client.chat.completions.create({
+        model: "gpt-4o-mini",
+        response_format: { type: "json_object" },
+        messages: [
+          {
+            role: "system",
+            content: `Você é um especialista em montar listas de tópicos do ENEM.
 
-      topicsJsonString = topicsJsonString.replace(/`(json)?\n/g, "").replace(/`/g, "");
+Gere apenas JSON válido, sem explicações, sem texto extra, sem crases.
 
+O formato obrigatório é:
+{
+  "topics": [
+    { "id": number, "name": string }
+  ]
+}`,
+          },
+          {
+            role: "user",
+            content: `Gere uma lista de tópicos mais importantes para o ENEM 2025 sobre a matéria "${content?.name}".`,
+          },
+        ],
+      });
 
-      const inicioJson = topicsJsonString.indexOf("[");
-      if (inicioJson !== -1) {
+      const json = JSON.parse(
+        completion.choices[0].message.content || "{}"
+      );
 
-        const jsonString = topicsJsonString.substring(inicioJson);
-        console.log("json *", jsonString)
-
-        const topicsArray = JSON.parse(jsonString);
-        setTopics(topicsArray);
-      } else {
-        console.error("JSON não encontrado na resposta.");
-      }
+      setTopics(json.topics);
     } catch (error) {
-      console.error("Erro ao obter ou analisar os tópicos:", error);
+      console.error("Erro ao obter tópicos:", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    getResponse()
-  }, [])
+    getResponse();
+  }, []);
 
   return (
     <View style={styles.container}>
