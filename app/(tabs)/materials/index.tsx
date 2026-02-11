@@ -1,15 +1,15 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import contentsJson from "../../constants/contents.json"
+import contentsJson from "../../../constants/contents.json"
 import { Link} from "expo-router";
 
-export default function ContentsPage() {
+export default function MaterialsPage() {
   const contents = contentsJson
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Matérias</Text>
       <ScrollView showsVerticalScrollIndicator={false}>
         {contents.map((content) =>
-          <Link key={content.id} href={{ pathname: '/[id]', params: { id: content.id } }}  asChild>
+          <Link key={content.id} href={{ pathname: '/materials/[id]', params: { id: content.id } }}  asChild>
             <TouchableOpacity style={styles.containerContent}>
               <Text style={styles.titleContent}>{content.name}</Text>
               <Text>{content.description}</Text>
@@ -25,11 +25,11 @@ export default function ContentsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 70,
     justifyContent: "center",
     alignItems: "center",
-    padding: 12,
+    padding: 2,
     gap: 20,
-    marginBottom: 20
   },
   title: {
     fontSize: 30,

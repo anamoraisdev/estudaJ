@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, ScrollView, TextInput, Button } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import Constants from "expo-constants";
 import Markdown from 'react-native-markdown-display';
@@ -106,9 +106,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 12,
-    gap: 20,
-    marginBottom: 20,
   },
   chatContainer: {
     flex: 1,
@@ -148,6 +145,10 @@ const styles = StyleSheet.create({
     padding: 10,
     marginRight: 10,
   },
+  button:{
+    flex: 1,
+    alignItems: "flex-start"
+  }
 });
 
 export default Chat;

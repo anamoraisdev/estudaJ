@@ -4,7 +4,7 @@ import { TouchableOpacity, Text, StyleSheet } from "react-native";
 export default function ButtonBasic() {
     const router = useRouter()
     return (
-        <TouchableOpacity style={styles.button} onPress={() => router.push("../contents")}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push("../materials")}>
             <Text style={styles.buttonText}>Começar</Text>
         </TouchableOpacity>
     )

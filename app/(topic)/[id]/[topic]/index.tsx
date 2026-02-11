@@ -6,8 +6,6 @@ import OpenAI from "openai";
 import Constants from "expo-constants";
 import Markdown from "react-native-markdown-display";
 
-
-
 const TopicPage = () => {
     const { id, topic } = useLocalSearchParams();
 
@@ -76,7 +74,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        paddingBottom: 100
+        paddingBottom: 100,
     },
 });
 

@@ -1,6 +1,6 @@
 import { Link, useLocalSearchParams } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import contentsJson from "../../../constants/contents.json";
+import contentsJson from "../../../constants/contents.json"
 import { useEffect, useState } from "react";
 import Constants from "expo-constants";
 import OpenAI from "openai";
@@ -10,7 +10,7 @@ interface Topic{
   name: string;
 }
 
-const ContentPage = () => {
+const TopicsPage = () => {
   const { id } = useLocalSearchParams();
   const content = contentsJson.find((item) => item.id === Number(id));
 
@@ -71,7 +71,7 @@ const ContentPage = () => {
           topics.map((item) => (
             <Link
               href={{
-                pathname: "/[id]/[topic]",
+                pathname: "/(topic)/[id]/[topic]",
                 params: {
                 topic: item.name
                  .normalize("NFD")
@@ -97,6 +97,7 @@ const ContentPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 70,
     justifyContent: "center",
     alignItems: "center",
     padding: 12,
@@ -135,4 +136,4 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 });
-export default ContentPage
+export default TopicsPage;
