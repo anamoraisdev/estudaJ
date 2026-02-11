@@ -1,7 +1,8 @@
-import { router, Tabs } from "expo-router";
+import { router, Tabs, useLocalSearchParams } from "expo-router";
 import { TouchableOpacity, Text } from "react-native";
 
 export default function TopicTabsLayout() {
+  const { id, topic } = useLocalSearchParams();
   return (
     <Tabs
       screenOptions={{
@@ -18,14 +19,17 @@ export default function TopicTabsLayout() {
       <Tabs.Screen
         name="index"
         options={{ title: "Conteúdo" }}
+        initialParams={{ id, topic }}
       />
       <Tabs.Screen
         name="chat"
         options={{ title: "Dúvida" }}
+        initialParams={{ id, topic }}
       />
       <Tabs.Screen
         name="tasks"
         options={{ title: "Praticar" }}
+        initialParams={{ id, topic }}
       />
     </Tabs>
   );

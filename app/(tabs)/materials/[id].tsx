@@ -73,7 +73,8 @@ const TopicsPage = () => {
               href={{
                 pathname: "/(topic)/[id]/[topic]",
                 params: {
-                topic: item.name
+                  id: item.id,
+                  topic: item.name
                  .normalize("NFD")
                  .replace(/[\u0300-\u036f]/g, "")
                  .replace(/\s+/g, "-")

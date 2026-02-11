@@ -11,7 +11,7 @@ interface ChatMessage {
 }
 
 const Chat = () => {
-  const { topic } = useLocalSearchParams();
+  const {topic } = useLocalSearchParams();
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [userInput, setUserInput] = useState("");
 
@@ -22,6 +22,7 @@ const Chat = () => {
   });
 
   useEffect(() => {
+    if (!topic) return;
     const introMessage = `👋 Vi que você está estudando **${topic}**.
     Se surgir qualquer dúvida sobre esse conteúdo, pode me perguntar que eu te explico de um jeito simples 😊`;
     setChatMessages([{ text: introMessage, sender: "gpt" }]);
