@@ -24,6 +24,8 @@ const Tasks = () => {
   const client = new OpenAI({ apiKey });
 
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: string }>({});
+  const [showTemplate, setShowTemplate] = useState(false);
 
   const getTasks = async () => {
     try {
@@ -74,71 +76,118 @@ Formato obrigatório:
     }
   };
 
+  const handleSelectOption = (questionId: number, letter: string) => {
+    if (showTemplate) return;
+    setSelectedAnswers((prev) => ({
+      ...prev,
+      [questionId]: letter,
+    }));
+  };
+
   useEffect(() => {
     getTasks();
   }, []);
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Atividades</Text>
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
-                {questions && questions.map((question) => (
-                    <View style={styles.card} key={question.id}>
-                        <Text style={styles.questionText}>
-                            {question.id}. {question.statement}
-                        </Text>
-                        <View style={styles.optionsContainer}>
-                            {question.options.map((option) => (
-                                <Text style={styles.optionText} key={option.id}>
-                                    {option.letter}) {option.text}
-                                </Text>
-                            ))}
-                        </View>
-                    </View>
-                ))}
-            </ScrollView>
-        </View>
-    )
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Atividades</Text>
+      <ScrollView >
+        {questions && questions.map((question) => (
+          <View style={styles.card} key={question.id}>
+            <Text style={styles.questionText}>
+              {question.id}. {question.statement}
+            </Text>
+            <View style={styles.optionsContainer}>
+              {question.options.map((option) => {
+                const selected = selectedAnswers[question.id];
+                const isSelected = selected === option.letter;
+                const isCorrect = question.template === option.letter;
+
+                let backgroundColor = "#fff";
+
+                if (showTemplate) {
+                  if (isCorrect) backgroundColor = "#c8f7c5";
+                  else if (isSelected && !isCorrect) backgroundColor = "#f7c5c5";
+                } else if (isSelected) {
+                  backgroundColor = "#dbeafe";
+                }
+
+                return (
+                  <Text
+                    key={option.id}
+                    onPress={() => handleSelectOption(question.id, option.letter)}
+                    style={[styles.optionButton, { backgroundColor }]}
+                  >
+                    {option.letter} {option.text}
+                  </Text>
+                );
+              })}
+            </View>
+          </View>
+        ))}
+
+        <Text
+          style={styles.templateButton}
+          onPress={() => setShowTemplate(true)}
+        >
+          Ver gabarito
+        </Text>
+      </ScrollView>
+    </View>
+  )
 }
 
 export default Tasks;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#ffffff',
-        paddingHorizontal: 16,
-        paddingVertical: 16
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
-        color: '#333',
-    },
-    scrollContainer: {
-        paddingBottom: 20,
-    },
-    card: {
-        backgroundColor: '#f5f5f5',
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 16,
-        borderWidth: 1,
-        borderColor: '#ddd',
-    },
-    questionText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#111',
-        marginBottom: 8,
-    },
-    optionsContainer: {
-        paddingLeft: 8,
-    },
-    optionText: {
-        fontSize: 14,
-        color: '#555',
-        marginBottom: 4,
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 16,
+    paddingVertical: 16
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    paddingBottom: 16,
+  },
+
+  card: {
+    borderRadius: 30,
+    justifyContent: "flex-start"
+  },
+  questionText: {
+    fontSize: 16,
+    fontWeight: '400',
+    color: '#111',
+    marginBottom: 8,
+  },
+  optionsContainer: {
+    paddingBottom: 50,
+  },
+  optionText: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 4,
+  },
+  optionButton: {
+    fontSize: 14,
+    color: '#333',
+    marginBottom: 8,
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+
+  templateButton: {
+    marginTop: 20,
+    backgroundColor: '#333',
+    color: '#fff',
+    textAlign: 'center',
+    padding: 14,
+    borderRadius: 10,
+    fontWeight: 'bold',
+  },
 });
