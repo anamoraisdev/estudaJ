@@ -15,10 +15,11 @@ interface Question {
   statement: string;
   options: Option[];
   template: string;
+  explanation: string;
 }
 
 const Tasks = () => {
-  const { topico } = useLocalSearchParams();
+  const { id, topic } = useLocalSearchParams();
   const apiKey = Constants.expoConfig?.extra?.openaiApiKey;
 
   const client = new OpenAI({ apiKey });
@@ -26,6 +27,7 @@ const Tasks = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: string }>({});
   const [showTemplate, setShowTemplate] = useState(false);
+
 
   const getTasks = async () => {
     try {
@@ -54,14 +56,15 @@ Formato obrigatório:
       "options": [
         { "id": number, "letter": "A", "text": string }
       ],
-      "template": "letra correta"
+      "template": "letra correta",
+      "explanation": "explicação didática do porquê essa é a correta"
     }
   ]
 }`,
           },
           {
             role: "user",
-            content: `Gere 5 questões de múltipla escolha sobre o tema "${topico}", no padrão ENEM.`,
+            content: `Gere 5 questões de múltipla escolha sobre o tema "${topic}", no padrão ENEM.`,
           },
         ],
       });
@@ -123,8 +126,19 @@ Formato obrigatório:
                 );
               })}
             </View>
+            {showTemplate && (
+              <View style={styles.explanationCard}>
+                <Text style={styles.explanationTitle}>Explicação</Text>
+                <Text style={styles.explanationText}>
+                  {question.explanation}
+                </Text>
+              </View>
+            )}
           </View>
+
         ))}
+
+
 
         <Text
           style={styles.templateButton}
@@ -146,16 +160,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16
   },
+ 
+
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
     paddingBottom: 16,
   },
-
+  optionsContainer:{
+    
+  },
   card: {
-    borderRadius: 30,
-    justifyContent: "flex-start"
+    justifyContent: "flex-start",
+    paddingBottom: 20
   },
   questionText: {
     fontSize: 16,
@@ -163,9 +181,7 @@ const styles = StyleSheet.create({
     color: '#111',
     marginBottom: 8,
   },
-  optionsContainer: {
-    paddingBottom: 50,
-  },
+
   optionText: {
     fontSize: 14,
     color: '#555',
@@ -190,4 +206,27 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     fontWeight: 'bold',
   },
+  explanationCard: {
+    backgroundColor: '#eef6ff',
+    padding: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#bcdcff',
+    
+  },
+
+  explanationTitle: {
+    fontWeight: 'bold',
+    marginBottom: 6,
+    fontSize: 14,
+    color: '#1e3a8a',
+  },
+
+  explanationText: {
+    fontSize: 14,
+    color: '#333',
+    lineHeight: 20,
+  },
+
+
 });
