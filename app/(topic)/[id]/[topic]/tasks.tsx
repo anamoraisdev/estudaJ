@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Constants from "expo-constants";
 import OpenAI from "openai";
+import { GabaritoGrid } from "@/components/templateGrid";
 
 interface Option {
   id: number;
@@ -38,29 +39,28 @@ const Tasks = () => {
           {
             role: "system",
             content: `Você é um especialista em criar questões no estilo ENEM.
+              Gere apenas JSON válido.
 
-Gere apenas JSON válido.
+              As questões devem:
+              - Ter contexto interpretativo como nas provas do ENEM
+              - Exigir raciocínio, não memorização
+              - Ter alternativas plausíveis
+              - Apenas UMA alternativa correta
 
-As questões devem:
-- Ter contexto interpretativo como nas provas do ENEM
-- Exigir raciocínio, não memorização
-- Ter alternativas plausíveis
-- Apenas UMA alternativa correta
-
-Formato obrigatório:
-{
-  "questions": [
-    {
-      "id": number,
-      "statement": string,
-      "options": [
-        { "id": number, "letter": "A", "text": string }
-      ],
-      "template": "letra correta",
-      "explanation": "explicação didática do porquê essa é a correta"
-    }
-  ]
-}`,
+              Formato obrigatório:
+              {
+                "questions": [
+                  {
+                    "id": number,
+                    "statement": string,
+                    "options": [
+                      { "id": number, "letter": "A", "text": string }
+                    ],
+                    "template": "letra correta",
+                    "explanation": "explicação didática do porquê essa é a correta"
+                  }
+                ]
+              }`,
           },
           {
             role: "user",
@@ -86,6 +86,7 @@ Formato obrigatório:
       [questionId]: letter,
     }));
   };
+
 
   useEffect(() => {
     getTasks();
@@ -138,7 +139,11 @@ Formato obrigatório:
 
         ))}
 
-
+        <GabaritoGrid
+          questions={questions}
+          selectedAnswers={selectedAnswers}
+          showTemplate={showTemplate}
+        />
 
         <Text
           style={styles.templateButton}
@@ -146,6 +151,7 @@ Formato obrigatório:
         >
           Ver gabarito
         </Text>
+        
       </ScrollView>
     </View>
   )
@@ -160,7 +166,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16
   },
- 
+
 
   title: {
     fontSize: 24,
@@ -168,8 +174,8 @@ const styles = StyleSheet.create({
     color: '#333',
     paddingBottom: 16,
   },
-  optionsContainer:{
-    
+  optionsContainer: {
+
   },
   card: {
     justifyContent: "flex-start",
@@ -199,7 +205,7 @@ const styles = StyleSheet.create({
 
   templateButton: {
     marginTop: 20,
-    backgroundColor: '#333',
+    backgroundColor: '#1e3a8a',
     color: '#fff',
     textAlign: 'center',
     padding: 14,
@@ -212,7 +218,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#bcdcff',
-    
+
   },
 
   explanationTitle: {
@@ -227,6 +233,14 @@ const styles = StyleSheet.create({
     color: '#333',
     lineHeight: 20,
   },
-
+  newQuestionsButton: {
+  marginTop: 12,
+  backgroundColor: '#1e40af',
+  color: '#fff',
+  textAlign: 'center',
+  padding: 14,
+  borderRadius: 10,
+  fontWeight: 'bold',
+  },
 
 });
