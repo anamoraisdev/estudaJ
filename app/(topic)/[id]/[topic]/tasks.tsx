@@ -87,6 +87,11 @@ const Tasks = () => {
     }));
   };
 
+  const handleNewQuestions = async () => {
+    setSelectedAnswers({});
+    setShowTemplate(false);
+    await getTasks();
+  };
 
   useEffect(() => {
     getTasks();
@@ -151,7 +156,16 @@ const Tasks = () => {
         >
           Ver gabarito
         </Text>
-        
+
+        {showTemplate && (
+          <Text
+            style={styles.newQuestionsButton}
+            onPress={handleNewQuestions}
+          >
+            Gerar novas questões
+          </Text>
+        )}
+
       </ScrollView>
     </View>
   )
