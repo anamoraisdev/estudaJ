@@ -7,7 +7,6 @@ export default function AppTabs() {
       <Tabs.Screen name="essay" options={{ title: "Redação" }} />
       <Tabs.Screen name="exams/index" options={{ title: "Simulados" }} />
       <Tabs.Screen name="materials/[id]" options={{ href: null }} />
-      <Tabs.Screen name="essay/motivators" options={{ href: null }} />
     </Tabs>
   );
 }
