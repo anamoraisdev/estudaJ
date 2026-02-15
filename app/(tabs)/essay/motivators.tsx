@@ -1,5 +1,5 @@
-import { View, Text, ActivityIndicator, ScrollView, StyleSheet } from "react-native";
-import { useLocalSearchParams, Stack } from "expo-router";
+import { View, Text, ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { useLocalSearchParams, Stack, router } from "expo-router";
 import { useEffect, useState } from "react";
 import Constants from "expo-constants";
 import OpenAI from "openai";
@@ -22,8 +22,10 @@ export type MotivatorsResponse = {
 };
 
 export default function Motivators() {
-  const { topic } = useLocalSearchParams();
+const { theme } = useLocalSearchParams<{ theme: string }>();
+  const topic = Array.isArray(theme) ? theme[0] : theme;
   const [loading, setLoading] = useState(false);
+
   const [motivators, setMotivators] = useState<MotivatorsResponse>({
     texts: [],
     data: []
@@ -130,6 +132,13 @@ export default function Motivators() {
             </Text>
           </View>
         ))}
+
+         <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push(`/essay/write?topic=${encodeURIComponent(topic)}`)}
+        >
+          <Text style={styles.buttonText}>Escrever redação</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -210,4 +219,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "#888",
   },
+  button: { 
+    backgroundColor: "#1E40AF",
+    padding: 16,
+    borderRadius: 12, 
+    alignItems: "center",
+    marginBottom: 20 
+  },
+
+  buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
 });
